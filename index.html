@@ -3989,11 +3989,12 @@ https://github.com/nodeca/pako/blob/main/LICENSE
         "word/_rels/document.xml.rels",
         `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>`,
       );
-      const sty = (id, name, b, u) =>
-        `<w:style w:type="paragraph" w:customStyle="1" w:styleId="${id}"><w:name w:val="${name}"/><w:qFormat/><w:rPr><w:rFonts w:ascii="Courier New" w:hAnsi="Courier New" w:cs="Courier New"/>${b ? "<w:b/>" : ""}${u ? '<w:u w:val="single"/>' : ""}<w:color w:val="000000"/><w:sz w:val="24"/></w:rPr></w:style>`;
+      // nivel: nivel de esquema (0 = aparece en el panel de navegación de Word, como un índice de páginas)
+      const sty = (id, name, b, u, nivel) =>
+        `<w:style w:type="paragraph" w:customStyle="1" w:styleId="${id}"><w:name w:val="${name}"/><w:qFormat/>${nivel != null ? `<w:pPr><w:outlineLvl w:val="${nivel}"/></w:pPr>` : ""}<w:rPr><w:rFonts w:ascii="Courier New" w:hAnsi="Courier New" w:cs="Courier New"/>${b ? "<w:b/>" : ""}${u ? '<w:u w:val="single"/>' : ""}<w:color w:val="000000"/><w:sz w:val="24"/></w:rPr></w:style>`;
       z.file(
         "word/styles.xml",
-        `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Courier New" w:hAnsi="Courier New" w:cs="Courier New"/><w:sz w:val="24"/><w:lang w:val="es-ES"/></w:rPr></w:rPrDefault></w:docDefaults>${sty("TextoNG", "Texto NG")}${sty("PaginaNG", "Pagina NG", 1, 1)}${sty("TiraNG", "Tira NG", 1)}${sty("VinetaNG", "Vineta NG", 1)}</w:styles>`,
+        `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Courier New" w:hAnsi="Courier New" w:cs="Courier New"/><w:sz w:val="24"/><w:lang w:val="es-ES"/></w:rPr></w:rPrDefault></w:docDefaults>${sty("TextoNG", "Texto NG")}${sty("PaginaNG", "Pagina NG", 1, 1, 0)}${sty("TiraNG", "Tira NG", 1)}${sty("VinetaNG", "Vineta NG", 1)}</w:styles>`,
       );
       z.file(
         "word/document.xml",
