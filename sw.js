@@ -3,7 +3,7 @@
    VERSION la pone construir_pwa.py a partir del contenido: si la app cambia, cambia la versión,
    el navegador instala esta copia nueva en segundo plano y la app avisa («Hay una versión nueva»).
    La nueva solo entra cuando el usuario pulsa Actualizar (mensaje «activar»). */
-const VERSION = "0a1f23a1a10b";
+const VERSION = "7065fdd15be1";
 const CACHE = "mg-app-" + VERSION;
 const FUENTES = "mg-fuentes"; // tipografías de Google, para que se vean igual sin conexión
 const APP = ["./", "index.html", "manifest.webmanifest", "icono-192.png", "icono-512.png", "icono-maskable-512.png", "apple-touch-icon.png"];

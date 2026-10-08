@@ -1080,6 +1080,13 @@
           <rect x="6.5" y="13" width="11" height="8" rx="1" /></svg></button
       ><button
         class="key ico"
+        data-cmd="S"
+        data-tip="Sin bordes: poner o quitar · ⌃⌥S"
+        aria-label="Sin bordes: poner o quitar"
+        ><svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="5" y="5" width="14" height="14" rx="1" stroke-dasharray="3 2.5" /></svg></button
+      ><button
+        class="key ico"
         data-cmd="UP"
         data-tip="Subir a la tira de arriba · ⌃⌥↑"
         aria-label="Subir a la tira de arriba"
@@ -1863,7 +1870,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
       const m = l.match(/^\s*(VI[NÑ]ETA\s+\d+(?:\s*\.?-|\.)?)/i);
       const pre = m[1];
       let resto = l.slice(m[0].length);
-      const h = { pre, anch: [], pl: [], an: [], gan: false, api: false, otras: [], notas: [], texto: "" };
+      const h = { pre, anch: [], pl: [], an: [], gan: false, api: false, sb: false, otras: [], notas: [], texto: "" };
       resto = resto.replace(/\[\[.*?\]\]/g, (x) => {
         h.notas.push(x);
         return " ";
@@ -1875,6 +1882,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
         else if (u.startsWith("ANGULO:")) h.an.push("ANGULO: " + u.slice(7).trim());
         else if (u === "GANCHO") h.gan = true;
         else if (u === "APILADA") h.api = true;
+        else if (u === "SIN BORDES") h.sb = true;
         else h.otras.push(c);
         return " ";
       });
@@ -1888,6 +1896,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
         ...h.an,
         ...(h.gan ? ["GANCHO"] : []),
         ...(h.api ? ["APILADA"] : []),
+        ...(h.sb ? ["SIN BORDES"] : []),
         ...h.otras,
       ].map((x) => "[" + x + "]");
       return (
@@ -1920,6 +1929,10 @@ https://github.com/nodeca/pako/blob/main/LICENSE
     const apilada = () =>
       editarMarca((h) => {
         h.api = !h.api;
+      });
+    const sinBordes = () =>
+      editarMarca((h) => {
+        h.sb = !h.sb;
       });
     function camara(fam, val) {
       editarMarca((h) => {
@@ -2166,7 +2179,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
             w,
             hook: /\[GANCHO\]/.test(u),
             stack: /\[APILADA\]/.test(u),
-            dash: false,
+            dash: /\[SIN BORDES\]/.test(u),
             ab: abrev(u),
             line: i,
             pal: 0,
@@ -2179,7 +2192,10 @@ https://github.com/nodeca/pako/blob/main/LICENSE
             .replace(/\*\*|~~|_/g, "")
             .trim();
           if (/^imagen:/i.test(d)) d = d.slice(7).trim();
-          esperando.dash = enc(d).startsWith("SIN BORDES");
+          // Sin bordes: la marca [SIN BORDES] o «sin bordes» en la primera frase de la descripción
+          // («Plano medio, sin bordes. …»); más adelante podría ser otra cosa («un espejo sin bordes»)
+          const fr = enc(d).split(/\.\s/)[0];
+          if (/(^|[^A-Z])SIN BORDES?([^A-Z]|$)/.test(fr)) esperando.dash = true;
           if (!esperando.ab) esperando.ab = planoHeur(d);
           esperando = null;
         }
@@ -2202,7 +2218,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
         }
         const m = u.slice(ini + 1, c).trim();
         if (m in ANCHOS) an++;
-        else if (m === "GANCHO" || m === "APILADA") {
+        else if (m === "GANCHO" || m === "APILADA" || m === "SIN BORDES") {
         } else if (m.startsWith("PLANO:") && PLANOS.includes(m.slice(6).trim())) pl++;
         else if (m.startsWith("ANGULO:") && ANGULOS.includes(m.slice(7).trim())) ang++;
         else out.push([i, `Marca desconocida: [${m}]`]);
@@ -3189,7 +3205,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
       const filas = [
         ["⌃⌥P · ⌃⌥T · ⌃⌥V", "Página, tira y viñeta nuevas"],
         ["⌃⌥A · ⌃⌥M · ⌃⌥E", "Viñeta ancha, media o estrecha"],
-        ["⌃⌥G · ⌃⌥K", "Gancho · Apilada"],
+        ["⌃⌥G · ⌃⌥K · ⌃⌥S", "Gancho · Apilada · Sin bordes"],
         ["⌃⌥↑ · ⌃⌥↓", "Subir o bajar la viñeta de tira"],
         ["⌃⌥1 · ⌃⌥2", "Plano · Ángulo (escribe el número)"],
         ["⌘U · ⌘B · ⌘⇧X", "Subrayar · Negrita · Tachar"],
@@ -3250,6 +3266,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
       E: () => ancho("ESTRECHA"),
       G: gancho,
       K: apilada,
+      S: sinBordes,
       UP: () => moverTira(-1),
       DOWN: () => moverTira(1),
       1: () => elegirCamara("PLANO"),
