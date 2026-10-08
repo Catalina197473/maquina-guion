@@ -1,0 +1,30 @@
+{
+  "name": "Máquina de Guion",
+  "short_name": "Máquina de Guion",
+  "description": "Máquina de escribir para guiones de cómic, con planificador de pliegos.",
+  "lang": "es",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#dcdedb",
+  "theme_color": "#dcdedb",
+  "icons": [
+    {
+      "src": "icono-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icono-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icono-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
